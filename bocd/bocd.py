@@ -283,7 +283,6 @@ class BOCD:
         else:
             self._run_length_posterior: FloatArray = p_r0.copy()
         self._prediction_time: int = 0
-        self._run_length_posterior: FloatArray = p_r0.copy()
         self._steps: dict[int, BOCD._BOCDTimeStep] = {}
         self._steps[self._observation_time] = BOCD._BOCDTimeStep.time_step_zero(
             _log_probabilities_from_probabilities(p_r0)
