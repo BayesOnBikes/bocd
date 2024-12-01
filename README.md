@@ -27,6 +27,13 @@ The main features of this implementation are:
 
 Examples can be found in a [Jupyter notebook](examples/Basics.ipynb).
 
+## Installation
+
+```bash
+git clone https://github.com/BayesOnBikes/bocd.git
+poetry install
+```
+
 ## Requirements
 
 The code was written in Python 3.13.
