@@ -13,7 +13,7 @@ The main features of this implementation are:
 - Extension of the algorithm to compute "look-ahead" posterior probabilities $p\left(r_{t}\mid x_{1:t+h}\right)$ for any $h\geq0$,
   whereas the original algorithm computes this posterior for $h=0$.
   This equips BOCD with offline changepoint
-  detection capabilities (see [derivations](docs/derivations.md)).
+  detection capabilities (see [derivations](docs/derivations.pdf)).
 - Support for arbitrary prior distributions $p\left(r_{0}\right)$ for the run length at time $t=0$.
 - Support for arbitrary changepoint probability distributions $p\left(r_{t}=0\mid r_{t-1}\right)$.
 - Any probability distribution $p_{\mathrm{gap}}(g)$ for the gap $g$ between consecutive changepoints
