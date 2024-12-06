@@ -10,29 +10,29 @@
 
 \subsection*{Computation of the posterior $p\left(r_{t} \mid x_{1:t+h}\right)$}
 
-Starting with $h=1$, the joint distribution $p(r_{t},x_{1:(t+1)})$ is:
+Starting with $h=1$, the joint distribution $p(r_{t},x_{1:t+1})$ is:
 
 \begin{align}
-p(r_{t},x_{1:(t+1)}) & =\sum_{r_{t+1}}p(r_{t},r_{t+1},x_{1:(t+1)})\\
+p(r_{t},x_{1:t+1}) & =\sum_{r_{t+1}}p(r_{t},r_{t+1},x_{1:t+1})\\
  & =\sum_{r_{t+1}}p(r_{t},x_{1:t})p(r_{t+1},x_{t+1}\vert r_{t},x_{1:t})\\
  & =p(r_{t},x_{1:t})\sum_{r_{t+1}}p(x_{t+1}\vert r_{t},r_{t+1},x_{1:t})p(r_{t+1}\vert r_{t},\cancel{x_{1:t}})\\
- & =p(r_{t},x_{1:t})\sum_{r_{t+1}}p(x_{t+1}\vert r_{t},x_{(t+1-r_{t+1}):t})p(r_{t+1}\vert r_{t})
+ & =p(r_{t},x_{1:t})\sum_{r_{t+1}}p(x_{t+1}\vert r_{t},x_{t+1-r_{t+1}:t})p(r_{t+1}\vert r_{t})
 \end{align}
 
 Explanations:
 \begin{itemize}
-    \item $p(x_{t+1}\vert r_{t},r_{t+1},x_{1:t})=p(x_{t+1}\vert r_{t},x_{(t+1-r_{t+1}):t})$, because knowing $r_{t+1}$ just selects the previous observations w.r.t. which we condition on. If $r_{t+1}=0$, this becomes $p(x_{t+1}\vert r_{t},x_{(t+1-r_{t+1}):t})=p(x_{t+1})$, which is the prior for observing $x_{t+1}$.
+    \item $p(x_{t+1}\vert r_{t},r_{t+1},x_{1:t})=p(x_{t+1}\vert r_{t},x_{t+1-r_{t+1}:t})$, because knowing $r_{t+1}$ just selects the previous observations w.r.t. which we condition on. If $r_{t+1}=0$, this becomes $p(x_{t+1}\vert r_{t},x_{t+1-r_{t+1}:t})=p(x_{t+1})$, which is the prior for observing $x_{t+1}$.
     \item The transition probability $p(r_{t+1}\vert r_{t},x_{1:t})$ from the run length at time $t$ to the run length at time $t+1$ does not depend on the history of observations $x_{1:t}$. This is a model assumption in BOCD.
 \end{itemize}
 
 For $h=2$, the joint distribution $p(r_{t},x_{1:t+2})$ is:
 
 \begin{align}
-p(r_{t},x_{1:t+2}) & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},r_{t+2},x_{1:(t+2)})\\
- & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},x_{1:(t+1)})p(r_{t+2},x_{t+2}\vert r_{t},r_{t+1},x_{1:(t+1)})\\
- & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},x_{1:(t+1)})p(x_{t+2}\vert\cancel{r_{t}},r_{t+1},r_{t+2},x_{1:(t+1)})p(r_{t+2}\vert\cancel{r_{t}},r_{t+1},\cancel{x_{1:(t+1)}})\\
- & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},x_{1:(t+1)})p(x_{t+2}\vert r_{t+1},x_{\left(t+2-r_{t+2}\right):\left(t+1\right)})p(r_{t+2}\vert r_{t+1})\\
- & =p(r_{t},x_{1:t})\sum_{r_{t+1},r_{t+2}}p(x_{t+1}\vert r_{t},x_{(t+1-r_{t+1}):t})p(r_{t+1}\vert r_{t})p(x_{t+2}\vert r_{t+1},x_{\left(t+2-r_{t+2}\right):\left(t+1\right)})p(r_{t+2}\vert r_{t+1})
+p(r_{t},x_{1:t+2}) & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},r_{t+2},x_{1:t+2})\\
+ & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},x_{1:t+1})p(r_{t+2},x_{t+2}\vert r_{t},r_{t+1},x_{1:t+1})\\
+ & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},x_{1:t+1})p(x_{t+2}\vert\cancel{r_{t}},r_{t+1},r_{t+2},x_{1:t+1})p(r_{t+2}\vert\cancel{r_{t}},r_{t+1},\cancel{x_{1:t+1}})\\
+ & =\sum_{r_{t+1},r_{t+2}}p(r_{t},r_{t+1},x_{1:t+1})p(x_{t+2}\vert r_{t+1},x_{t+2-r_{t+2}:t+1})p(r_{t+2}\vert r_{t+1})\\
+ & =p(r_{t},x_{1:t})\sum_{r_{t+1},r_{t+2}}p(x_{t+1}\vert r_{t},x_{t+1-r_{t+1}:t})p(r_{t+1}\vert r_{t})p(x_{t+2}\vert r_{t+1},x_{t+2-r_{t+2}:t+1})p(r_{t+2}\vert r_{t+1})
 \end{align}
 
 Explanations:
@@ -44,7 +44,7 @@ Explanations:
 By following this pattern, for arbitrary $h\geq0$ the joint distribution $p\left(r_{t},x_{1:t+h}\right)$ becomes:
 
 \begin{align}
-p(r_{t},x_{1:t+h})=p(r_{t},x_{1:t})\underbrace{\sum_{r_{t+1},...,r_{t+h}}\prod_{m=1}^{h}\left[p(x_{t+m}\vert r_{t+m-1},x_{(t+m-r_{t+m}):\left(t+m-1\right)})p(r_{t+m}\vert r_{t+m-1})\right]}_{=:M}
+p(r_{t},x_{1:t+h})=p(r_{t},x_{1:t})\underbrace{\sum_{r_{t+1},...,r_{t+h}}\prod_{m=1}^{h}\left[p(x_{t+m}\vert r_{t+m-1},x_{t+m-r_{t+m}:t+m-1})p(r_{t+m}\vert r_{t+m-1})\right]}_{=:M}
 \end{align}
 
 The factor $M$ is understood to be one, if $h=0$.\\\\
@@ -63,7 +63,7 @@ The factor $M$ can be best understood as being the product of $h$ matrices $M_{t
 M_{2}=\underbrace{\left[\begin{array}{ccc}
 p(x_{2}) & p(x_{2}\vert x_{1}) & 0\\
 p(x_{2}) & 0 & p(x_{2}\vert x_{1})
-\end{array}\right]}_{p(x_{2}\vert r_{1},x_{(2-r_{2}):1})}\circ\underbrace{\left[\begin{array}{ccc}
+\end{array}\right]}_{p(x_{2}\vert r_{1},x_{2-r_{2}:1})}\circ\underbrace{\left[\begin{array}{ccc}
 p(r_{2}=0\vert r_{1}=0) & p(r_{2}=1\vert r_{1}=0) & 0\\
 p(r_{2}=0\vert r_{1}=1) & 0 & p(r_{2}=2\vert r_{1}=1)
 \end{array}\right]}_{p(r_{2}\vert r_{1})},
@@ -75,7 +75,7 @@ where $\circ$ denotes element-wise multiplication. Similarly, for $m=2$ we have:
 p(x_{3}) & p(x_{3}\vert x_{1}) & 0 & 0\\
 p(x_{3}) & 0 & p(x_{3}\vert x_{1:2}) & 0\\
 p(x_{3}) & 0 & 0 & p(x_{3}\vert x_{1:2})
-\end{array}\right]}_{p(x_{3}\vert r_{2},x_{(3-r_{3}):2})}\\
+\end{array}\right]}_{p(x_{3}\vert r_{2},x_{3-r_{3}:2})}\\
  & \circ\underbrace{\left[\begin{array}{cccc}
 p(r_{3}=0\vert r_{2}=0) & p(r_{3}=1\vert r_{2}=0) & 0 & 0\\
 p(r_{3}=0\vert r_{2}=1) & 0 & p(r_{3}=2\vert r_{2}=1) & 0\\
