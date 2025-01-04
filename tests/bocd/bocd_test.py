@@ -1,10 +1,7 @@
 import numpy as np
 import pytest
 
-from bocd.bocd import (
-    BOCD,
-    TimeSeriesModel,
-)
+from bocd.bocd import BOCD, ChangepointProbabilityDistribution, TimeSeriesModel
 from bocd.bocd_types import FloatArray
 from bocd.bocd_utils import (
     changepoint_probability_distribution_from_gap_probability_distribution,
@@ -116,3 +113,41 @@ class TestExtremeCases:
 
         # then
         assert run_length_posteriors[:, 0] == pytest.approx(1.0)
+
+
+class TestErrorCases:
+    @pytest.fixture
+    def p_r0(self) -> FloatArray:
+        return np.array([0.25, 0.25, 0.0, 0.3, 0.2], dtype=np.float64)
+
+    @pytest.fixture
+    def changepoint_prob(self) -> ChangepointProbabilityDistribution:
+        gap_probs = np.array([0.1, 0, 0.3, 0.2, 0.1, 0.3], dtype=np.float64)
+        return changepoint_probability_distribution_from_gap_probability_distribution(
+            gap_probs
+        )
+
+    def test_negative_h(
+        self,
+        model: TimeSeriesModel,
+        data: FloatArray,
+        p_r0: FloatArray,
+        changepoint_prob: ChangepointProbabilityDistribution,
+    ) -> None:
+        sut = BOCD(model, changepoint_prob, p_r0)
+        with pytest.raises(ValueError) as _:
+            _, _, _ = sut.run_length_posteriors(data, -1)
+
+    def test_invalid_prob_threshold(
+        self,
+        model: TimeSeriesModel,
+        p_r0: FloatArray,
+        changepoint_prob: ChangepointProbabilityDistribution,
+    ) -> None:
+        negative_prob_threshold = -42.0
+        with pytest.raises(ValueError) as _:
+            BOCD(model, changepoint_prob, p_r0, prob_threshold=negative_prob_threshold)
+
+        too_large_prob_threshold = 42.0
+        with pytest.raises(ValueError) as _:
+            BOCD(model, changepoint_prob, p_r0, prob_threshold=too_large_prob_threshold)

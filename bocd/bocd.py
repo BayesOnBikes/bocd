@@ -578,6 +578,9 @@ class BOCD:
             Note that the last `h` posteriors do not look ahead `h` steps into the future, but rather
             `h-1`, `h-2`, ..., `0` steps.
         """
+        if h < 0:
+            raise ValueError("h must be >= 0")
+
         N = data.shape[0]
         r_posteriors_list = []
         prediction_times = np.zeros(N + 1, dtype=int)
