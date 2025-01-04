@@ -8,13 +8,19 @@ from bocd.bocd_utils import (
 )
 
 
-@pytest.fixture(params=[0, 42])
+@pytest.fixture(params=[0, 42], ids=lambda t: f"t={t}")
 def t(request: pytest.FixtureRequest) -> int:
     return request.param
 
 
-@pytest.mark.parametrize("any_valid_lambda", [0.0, 1.0, 0.5, 0.8])
-@pytest.mark.parametrize("r_t_1", [np.arange(42), np.array([123]), np.array([])])
+@pytest.mark.parametrize(
+    "any_valid_lambda", [0.0, 1.0, 0.5, 0.8], ids=lambda lmd: f"lambda={lmd}"
+)
+@pytest.mark.parametrize(
+    "r_t_1",
+    [np.arange(42), np.array([123]), np.array([])],
+    ids=["r_t_1 range", "single r_t_1", "empty r_t_1"],
+)
 def test_memoryless_changepoint_probability_distribution(
     any_valid_lambda: float, t: int, r_t_1: IntArray
 ) -> None:

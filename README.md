@@ -51,7 +51,6 @@ For the examples, the following packages are additionally required:
 ## Roadmap
 
 - **Additional Time Series Models**: Implement more models.
-- **Unit Tests**: Develop a comprehensive test suite to ensure code reliability.
 
 ## Acknowledgments
 
