@@ -581,6 +581,8 @@ class BOCD:
         if h < 0:
             raise ValueError("h must be >= 0")
 
+        h = min(h, data.shape[0])
+
         N = data.shape[0]
         r_posteriors_list = []
         prediction_times = np.zeros(N + 1, dtype=int)
