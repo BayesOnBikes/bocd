@@ -492,7 +492,10 @@ class BOCD:
         to account for that increased maximum run length at current time `t`.
         """
         retained_length = self._highest_significant_run_length()
-        if retained_length == self._steps[self._prediction_time].r_t_max:
+        if (
+            retained_length == self._steps[self._prediction_time].r_t_max
+            or retained_length < 1
+        ):
             return
         self._run_length_posterior = self._run_length_posterior[: retained_length + 1]
         self._run_length_posterior /= self._run_length_posterior.sum()
@@ -768,7 +771,7 @@ class BOCD:
             """Retains only the first `retained_length + 1` run lengths and
             also cuts off other arrays such that this instance remains in
             a consistent state."""
-            if -1 < retained_length < self.r_t_max:
+            if 0 < retained_length < self.r_t_max:
                 # Cut off tail from log joint probs log(p(r_{t}, x_{1:t}))
                 assert self._log_joint_probs is not None
                 self._log_joint_probs = self._log_joint_probs[: retained_length + 1]

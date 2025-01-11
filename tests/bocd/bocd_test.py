@@ -67,7 +67,7 @@ def h(request: pytest.FixtureRequest) -> int:
     return request.param
 
 
-@pytest.fixture(params=[None, 1e-4, 0.9], ids=lambda p: f"p_thresh={p}")
+@pytest.fixture(params=[None, 1e-4, 0.1], ids=lambda p: f"p_thresh={p}")
 def probability_threshold(request: pytest.FixtureRequest) -> float | None:
     """Tail probability to discard"""
     return request.param
