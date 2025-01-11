@@ -500,7 +500,7 @@ class BOCD:
         self._run_length_posterior = self._run_length_posterior[: retained_length + 1]
         self._run_length_posterior /= self._run_length_posterior.sum()
         for i, step in enumerate(self._steps.values()):
-            step.retain_run_lengths_up_to(retained_length + i)
+            step.retain_run_lengths_up_to(retained_length + i, i > 0)
         self._model.keep_only_latest(self._r_t_max)
 
     def _highest_significant_run_length(self) -> int:
@@ -767,14 +767,20 @@ class BOCD:
                 )
             return self._log_cp_component, self._log_growth_component  # type: ignore
 
-        def retain_run_lengths_up_to(self, retained_length: int):
+        def retain_run_lengths_up_to(self, retained_length: int, invalidate: bool):
             """Retains only the first `retained_length + 1` run lengths and
             also cuts off other arrays such that this instance remains in
-            a consistent state."""
+            a consistent state. If `invalidate` is set to True, the step
+            will "forget" its calculations.
+            """
             if 0 < retained_length < self.r_t_max:
-                # Cut off tail from log joint probs log(p(r_{t}, x_{1:t}))
-                assert self._log_joint_probs is not None
-                self._log_joint_probs = self._log_joint_probs[: retained_length + 1]
+                if invalidate:
+                    # Set to None will force a re-computation of the log joint probs
+                    self._log_joint_probs = None
+                else:
+                    # Cut off tail from log joint probs log(p(r_{t}, x_{1:t}))
+                    assert self._log_joint_probs is not None
+                    self._log_joint_probs = self._log_joint_probs[: retained_length + 1]
 
                 # Note that from `_log_cp_probs` and `_log_growth_probs`,
                 # one more element is cut off as compared to the joint

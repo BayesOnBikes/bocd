@@ -13,7 +13,7 @@ class FakeTimeSeriesModel(TimeSeriesModel):
         """Ctor
 
         Args:
-            priors (dict[int, float] | None, optional): On optional dictionary
+            priors (dict[int, float] | None, optional): An optional dictionary
             mapping `t` to the prior probability `p(x_{t})`, which is
             the predictive probability given t is a changepoint (= no historical data
             taken into account).
@@ -67,7 +67,7 @@ def h(request: pytest.FixtureRequest) -> int:
     return request.param
 
 
-@pytest.fixture(params=[None, 1e-4, 0.1], ids=lambda p: f"p_thresh={p}")
+@pytest.fixture(params=[None, 1e-4, 1e-2, 0.1, 0.99], ids=lambda p: f"p_thresh={p}")
 def probability_threshold(request: pytest.FixtureRequest) -> float | None:
     """Tail probability to discard"""
     return request.param
@@ -157,6 +157,9 @@ class TestNormalCases:
 
             # then
             assert previous_cp_posterior <= next_cp_posterior
+            assert np.allclose(run_length_posteriors.sum(axis=1), 1.0), (
+                "Not a probability distribution"
+            )
 
             previous_cp_posterior = next_cp_posterior
 
@@ -200,6 +203,9 @@ class TestNormalCases:
 
             # then
             assert previous_cp_posterior < next_cp_posterior
+            assert np.allclose(run_length_posteriors.sum(axis=1), 1.0), (
+                "Not a probability distribution"
+            )
 
             previous_cp_posterior = next_cp_posterior
 
