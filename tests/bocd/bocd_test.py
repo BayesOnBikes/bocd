@@ -62,12 +62,12 @@ def data(request: pytest.FixtureRequest) -> FloatArray:
     return request.param
 
 
-@pytest.fixture(params=[0, 1, 2], ids=lambda h: f"h={h}")
+@pytest.fixture(params=[0, 1, 2, 3], ids=lambda h: f"h={h}")
 def h(request: pytest.FixtureRequest) -> int:
     return request.param
 
 
-@pytest.fixture(params=[None, 1e-4, 1e-2, 0.1, 0.99], ids=lambda p: f"p_thresh={p}")
+@pytest.fixture(params=[None, 1e-4, 1e-2, 0.5, 0.99], ids=lambda p: f"p_thresh={p}")
 def probability_threshold(request: pytest.FixtureRequest) -> float | None:
     """Tail probability to discard"""
     return request.param
@@ -160,7 +160,6 @@ class TestNormalCases:
             assert np.allclose(run_length_posteriors.sum(axis=1), 1.0), (
                 "Not a probability distribution"
             )
-
             previous_cp_posterior = next_cp_posterior
 
     def test_when_predictive_probability_increases_then_the_cp_posterior_increases(

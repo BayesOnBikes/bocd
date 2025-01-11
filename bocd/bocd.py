@@ -492,10 +492,13 @@ class BOCD:
         to account for that increased maximum run length at current time `t`.
         """
         retained_length = self._highest_significant_run_length()
-        if (
-            retained_length == self._steps[self._prediction_time].r_t_max
-            or retained_length < 1
-        ):
+        # The retained length must be at least 1, because at each time step
+        # we must account for the probability for `r_{t} = 0` and for `r_{t} = 1` at least.
+        # A retained length of 0 would mean that `p(r_{t} = 0) = 1`, which is not possible,
+        # because from the previous time step `t-1` - even if it had probability `p(r_{t-1} = 0) = 1` -
+        # we could have `r_{t} = 0` as well as `r_{t} = 1`.
+        retained_length = max(retained_length, 1)
+        if retained_length == self._steps[self._prediction_time].r_t_max:
             return
         self._run_length_posterior = self._run_length_posterior[: retained_length + 1]
         self._run_length_posterior /= self._run_length_posterior.sum()
